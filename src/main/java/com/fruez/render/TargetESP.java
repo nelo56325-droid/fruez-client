@@ -2,6 +2,7 @@ package com.fruez.render;
 
 import com.fruez.ModuleManager;
 import com.fruez.modules.combat.KillAura;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
@@ -15,7 +16,6 @@ public class TargetESP {
     public static float rotation = 0f;
 
     public static void onTick() {
-        // Dönüş hızını ayarla (daha hızlı dönmesi için değeri artır)
         rotation += 10f;
         if (rotation >= 360f) rotation -= 360f;
     }
@@ -35,8 +35,7 @@ public class TargetESP {
         double y = target.getY() - camPos.y;
         double z = target.getZ() - camPos.z;
 
-        // Hedefin boyutunu al
-        double width = target.getWidth() * 1.2; 
+        double width = target.getWidth() * 1.2;
         double height = target.getHeight();
 
         matrices.push();
@@ -45,18 +44,15 @@ public class TargetESP {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableCull();
-        RenderSystem.disableDepthTest(); // Duvar arkasından gösterme (opsiyonel)
+        RenderSystem.disableDepthTest();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        RenderSystem.lineWidth(2.5f); // Çizgi kalınlığı
+        RenderSystem.lineWidth(2.5f);
 
         Matrix4f matrix = matrices.peek().getPositionMatrix();
 
-        // Kırmızı ve mor karışımı bir renk (ekran görüntüsüne benzer)
         float r = 0.9f, g = 0.3f, b = 1.0f, a = 0.9f;
 
-        // --- X ŞEKLİNİ ÇİZ ---
-        // Hedefin merkezinden geçen, dönen bir X çiz
-        drawRotatedX(matrix, (float)height / 2f, width, rotation, r, g, b, a);
+        drawRotatedX(matrix, (float) height / 2f, width, rotation, r, g, b, a);
 
         RenderSystem.enableDepthTest();
         RenderSystem.enableCull();
@@ -66,7 +62,6 @@ public class TargetESP {
     }
 
     private static void drawRotatedX(Matrix4f matrix, float yOffset, double width, float rot, float r, float g, float b, float a) {
-        // X'i hedefin merkezine taşı ve döndür
         MatrixStack temp = new MatrixStack();
         temp.translate(0, yOffset, 0);
         temp.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rot));
@@ -77,25 +72,21 @@ public class TargetESP {
 
         float w = (float) width;
 
-        // 1. Çapraz Çizgi (Sol üstten sağ alta)
         buffer.vertex(m, -w, 0, -w).color(r, g, b, a).next();
         buffer.vertex(m, w, 0, w).color(r, g, b, a).next();
 
-        // 2. Çapraz Çizgi (Sağ üstten sol alta)
         buffer.vertex(m, w, 0, -w).color(r, g, b, a).next();
         buffer.vertex(m, -w, 0, w).color(r, g, b, a).next();
 
-        // 3. İsteğe bağlı: Dikey çizgiler ekleyerek daha şık hale getir
-        // X'in dört ucundan yukarı doğru ince çizgiler
         buffer.vertex(m, -w, 0, -w).color(r, g, b, a * 0.5f).next();
         buffer.vertex(m, -w, yOffset * 2f, -w).color(r, g, b, a * 0.5f).next();
-        
+
         buffer.vertex(m, w, 0, w).color(r, g, b, a * 0.5f).next();
         buffer.vertex(m, w, yOffset * 2f, w).color(r, g, b, a * 0.5f).next();
-        
+
         buffer.vertex(m, w, 0, -w).color(r, g, b, a * 0.5f).next();
         buffer.vertex(m, w, yOffset * 2f, -w).color(r, g, b, a * 0.5f).next();
-        
+
         buffer.vertex(m, -w, 0, w).color(r, g, b, a * 0.5f).next();
         buffer.vertex(m, -w, yOffset * 2f, w).color(r, g, b, a * 0.5f).next();
 
