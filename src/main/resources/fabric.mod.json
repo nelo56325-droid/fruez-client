@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "fruez",
+  "version": "1.0.0",
+  "name": "Fruez Client",
+  "description": "Custom Minecraft client",
+  "authors": ["Fruez"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.fruez.FruezClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
